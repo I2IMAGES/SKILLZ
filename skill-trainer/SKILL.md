@@ -5,70 +5,103 @@ description: Interactive tutorial, flashcard deck, and quiz for learning how to 
 
 # Skill Trainer
 
-This skill teaches people how to build and deploy Claude Code skills correctly — the file structure, the frontmatter, the prompt design, and the deployment steps. It runs as a short interactive session with three modes the learner can choose from.
+This skill teaches people how to build and deploy Claude Code skills — through a structured tutorial, a 20-card flashcard deck, a 10-question scored quiz, and a live build challenge where the learner writes a real skill and gets critique.
+
+The design follows adult learning principles: start with what the learner is trying to do, connect every concept to that goal, and build toward capability (applying in novel situations) not just competency (answering recall questions).
 
 ---
 
-## On Start
+## Intake: Always Run This First
 
-Greet the user and present the three modes. Ask them to pick one:
+Before presenting mode options, run a 3-question intake. One question at a time.
+
+**Q1:** "What are you working on or trying to build with Claude skills? Even a rough idea is fine."
+
+**Q2:** "How much have you worked with Claude Code skills before?"
+- Never used them
+- Installed one but haven't built my own
+- Built one or two, but not confident yet
+- Used them regularly, just want a refresher
+
+**Q3:** "What is your biggest uncertainty right now — what would make you feel most confident after this session?"
+
+After they answer all three, do three things:
+1. Acknowledge what they said specifically — mirror their language, not a generic "great!"
+2. Recommend a mode based on their answers (see routing logic below)
+3. Tell them how today's session connects to what they said they are building
+
+**Routing logic:**
+- "Never used" → recommend Tutorial, then optionally Flashcards
+- "Installed but not built" → recommend Tutorial starting from Module 2, or jump to Build Challenge if they are bold
+- "Built one or two" → recommend Flashcards + Quiz, skip Tutorial unless they want it
+- "Refresher" → recommend Quiz to find gaps, then targeted review of missed topics
+- If their uncertainty maps to a specific topic, surface that module by name
+
+Always ask: "Does that sound right, or do you want to take a different path?" Adults direct their own learning — do not override their preference.
 
 ---
 
-Welcome to the **Claude Skill Builder Trainer**.
+## Modes
 
-Pick a mode:
+Present these after intake:
 
-1. **Tutorial** — I walk you through everything step by step, with examples. Best if you are new or want a solid foundation.
-2. **Flashcards** — Rapid-fire Q&A. I show a card, you answer, I tell you how you did. Best for review.
-3. **Quiz** — 10 scored questions. I grade you at the end and tell you what to revisit. Best for testing yourself.
+1. **Tutorial** — five modules, one at a time, with check questions. Best for building a foundation.
+2. **Flashcards** — 20 cards, rapid review, re-runs what you missed. Best for reinforcement.
+3. **Quiz** — 10 scored questions with topic tags. Ends with a diagnostic breakdown and improvement pathway, not just a grade.
+4. **Build Challenge** — you draft a real skill, I critique it. Best for applying what you know.
+5. **all** — Tutorial → Flashcards → Quiz → Build Challenge in sequence.
 
-Or type **"all"** to run Tutorial → Flashcards → Quiz in sequence.
-
-Which mode do you want?
-
----
-
-Run whichever mode they pick. If they type anything that is not a mode name, infer intent (e.g. "just quiz me" → Quiz mode).
+Or they can name a specific topic and go straight there.
 
 ---
 
 ## Mode 1: Tutorial
 
-Walk through the five modules below in order. Each module:
-- Explains the concept clearly (plain language, no jargon padding)
-- Shows a concrete example
-- Ends with one quick check question before moving on
+Five modules in order. Deliver one at a time.
 
-Deliver one module at a time. Wait for the user to say "next", "got it", "continue", or answer the check question before advancing.
+**At the start of each module, before the content:**
+State in one sentence why this module matters to what they said they are building. Use the intake answers. If they said "I want to build a code review skill", say: "This is the part that will make your code review skill fire reliably instead of getting missed."
+
+**At the end of each module, before the check question:**
+Ask a reflection prompt. These are not scored — they are for the learner. Wait for their answer and respond to it before moving on.
+
+**At the very end of the tutorial:**
+Ask a double-loop question: "Before today, what did you assume about how Claude skills work that turned out to be different than you expected?" This surfaces hidden assumptions and cements the learning.
 
 ---
 
 ### Module 1 — What Is a Claude Skill?
 
+**Why it matters (connect to their goal):** Stated before content using their intake answer.
+
 **Concept:**
-A Claude Code skill is a Markdown file that gives Claude a set of instructions for a specific, reusable task. When the skill is installed, Claude can invoke it with a slash command or natural language trigger. Skills let you package any repeatable workflow — an interview protocol, a code review checklist, a release process — into something Claude can run on demand, consistently, across sessions.
+A Claude Code skill is a Markdown file that gives Claude a set of instructions for a specific, reusable task. When the skill is installed, Claude invokes it via a slash command or natural language trigger — consistently, across sessions, for anyone who has the file.
 
-Think of it as a persistent system prompt scoped to one job.
+Skills let you package any repeatable workflow into something Claude can run on demand: an interview protocol, a code review checklist, a release process, a customer onboarding flow.
 
-**Example use cases:**
+Think of it as a persistent instruction set scoped to one job. The difference from a regular system prompt: a skill is named, stored, triggered on demand, and reusable across conversations. A system prompt is set once per session for everything.
+
+**Examples:**
 - `/sop-builder` — interview someone and produce a process document
 - `/code-review` — run a structured review on the current diff
 - `/deploy-checklist` — walk through a pre-deploy verification list
 
-**Key point:** Skills are just Markdown files. There is no code to compile, no package to publish. You write the instructions, drop the file in the right folder, and Claude picks it up.
+**Key point:** Skills are just Markdown files. No code to compile, no package to publish. Write the instructions, drop the file in the right folder, restart Claude Code.
+
+**Reflection prompt:**
+"Think about a task you do repeatedly that Claude currently handles inconsistently or that you have to re-explain every time. What would it mean to have that packaged as a skill?"
 
 **Check question:**
-> In your own words: what is the difference between a Claude skill and a regular system prompt?
+> What is the difference between a Claude skill and a system prompt? Give me two differences.
 
-*(Expected answer: a skill is reusable, has a trigger, is stored in a file, and can be invoked on demand — rather than being set once per session.)*
+*Expected: skill is reusable / stored in a file / has a name and trigger / works across sessions / invoked on demand vs. system prompt is set once per session for the whole conversation.*
 
 ---
 
 ### Module 2 — The File Structure
 
 **Concept:**
-Every skill lives in its own folder inside `~/.claude/skills/`. The folder name becomes the skill's identity. Inside that folder, the only required file is `SKILL.md`. You can add supporting files (`TEMPLATE.md`, `CHECKLIST.md`, reference data) that the skill references — Claude will load them as needed.
+Every skill lives in its own folder inside `~/.claude/skills/`. The folder name becomes the skill's identity.
 
 ```
 ~/.claude/skills/
@@ -78,10 +111,10 @@ Every skill lives in its own folder inside `~/.claude/skills/`. The folder name 
     └── README.md         ← optional, for humans
 ```
 
-**The SKILL.md file has two parts:**
+`SKILL.md` has two parts:
 
-1. **Frontmatter** (YAML between `---` delimiters) — tells Claude *when* to use this skill
-2. **Body** — tells Claude *how* to run it
+**1. Frontmatter** — YAML between `---` delimiters. Tells Claude *when* to use this skill.
+**2. Body** — everything after. Tells Claude *how* to run it.
 
 ```markdown
 ---
@@ -94,27 +127,34 @@ description: What this skill does and when to invoke it. Include trigger phrases
 [Instructions for Claude go here]
 ```
 
-**Key point:** The `description` field in the frontmatter is load-bearing. Claude uses it to decide whether to invoke the skill. A vague description means the skill gets missed or fires at the wrong time. A good description names the job, the trigger phrases, and the context.
+Supporting files (templates, checklists, reference data) go in the same folder. Reference them by filename in the skill body. Claude will load them as needed.
+
+`README.md` is for humans — install instructions, what the skill does, example output. Claude does not execute it.
+
+**Reflection prompt:**
+"If you were to structure the skill you described in the intake, what supporting files might you need alongside `SKILL.md`?"
 
 **Check question:**
-> What is the folder path where skills live, and what is the one required file inside the skill folder?
+> Where does the skill live on the file system, and what is the one required file?
 
-*(Expected answer: `~/.claude/skills/your-skill-name/SKILL.md`)*
+*Expected: `~/.claude/skills/your-skill-name/SKILL.md`*
 
 ---
 
 ### Module 3 — Writing the Frontmatter
 
 **Concept:**
-The frontmatter block controls how Claude recognizes and invokes the skill. Three fields matter:
+Three frontmatter fields matter:
 
 | Field | Required | Purpose |
 |-------|----------|---------|
-| `name` | Yes | The skill's identifier — matches the folder name and the `/command` |
-| `description` | Yes | Natural language description of when to use this skill — Claude reads this to decide if it applies |
+| `name` | Yes | Identifier — matches folder name and becomes the slash command |
+| `description` | Yes | When to invoke this skill — Claude reads this to match intent |
 | `triggers` | No | Explicit slash commands or phrases that always invoke it |
 
-**Good description (specific):**
+The `description` field is load-bearing. Claude reads it to decide whether the skill applies to what the user just said. A vague description causes misses (skill doesn't fire when it should) or false triggers (skill fires when it shouldn't).
+
+**Good description:**
 ```yaml
 description: >
   Interview someone to document a process as an SOP.
@@ -124,268 +164,283 @@ description: >
   and needs to be written down.
 ```
 
-**Bad description (vague):**
+**Bad description:**
 ```yaml
 description: Helps with documentation and process stuff.
 ```
 
-The bad version will be ignored or fire at random. The good version gives Claude enough signal to match intent accurately.
+The bad version is ignored or fires at random. The good version gives Claude enough signal to match intent accurately.
 
-**Key point:** Write the description as if you are telling a smart colleague when to hand off to this specialist. Include the job, the context, and the trigger phrases.
+Write the description as if briefing a smart colleague: here is the job, here is when to hand it off, here is what the trigger looks like.
+
+**Reflection prompt:**
+"Draft a one-sentence description for the skill you have in mind. Read it back and ask: if someone said something slightly different from your trigger phrase, would Claude still catch it?"
 
 **Check question:**
-> Name two things a good `description` field should include that a bad one leaves out.
+> Your skill is not triggering even though you typed the slash command. The file is in the right place. What do you check next, and why?
 
-*(Expected: trigger phrases / slash commands, the specific job or context, examples of when to invoke it)*
+*Expected: Check that the `name` field in frontmatter matches the slash command they typed. Then check `description` includes the phrase. Then check they restarted Claude Code.*
 
 ---
 
 ### Module 4 — Writing the Skill Body
 
 **Concept:**
-The body is Claude's instruction manual for running the skill. It should be clear, sequenced, and specific. The most common mistakes:
+The body is Claude's instruction manual. The most common mistakes:
 
 **Mistake 1: Describing what to do without saying how.**
 ```
-# Bad
+# Vague
 Help the user document their process.
 
-# Good
+# Specific
 Ask one question at a time. Start with: "What process are we documenting today?"
-Wait for the answer before asking the next question.
-Work through these sections in order: [list]
+Wait for the answer before asking the next. Work through these sections in order: [list]
 ```
 
-**Mistake 2: No output spec.**
-A skill that doesn't define its output format will produce something different every time. Always specify: what does "done" look like? A table? A markdown file? A numbered list? Name it explicitly.
+**Mistake 2: No output specification.**
+Without an explicit output format, Claude improvises every time. Name the format: a table, a Markdown file, a numbered list, a specific template. Name the file it should be saved as. Name who it is for.
 
-**Mistake 3: No handling for edge cases.**
-What if the user wants to skip ahead? What if their answer is incomplete? What if they ask a question mid-flow? Good skills handle the predictable interruptions.
+**Mistake 3: No edge case handling.**
+What if the user skips ahead? Gives a very short answer? Asks a question mid-flow? Predictable interruptions should be handled explicitly. If you don't handle them, Claude will handle them inconsistently.
 
 **Structure that works:**
 
 ```markdown
 ## When to Use
-[Precise conditions]
+[Precise conditions — not just "when asked", but what context, what signals]
 
 ## How It Works
-[The process, step by step]
+[The process, sequenced step by step]
 
 ## Rules
-[Numbered constraints Claude must follow]
+[Numbered constraints — what Claude must always/never do]
 
 ## Output
-[Exactly what the finished result looks like]
+[Exactly what the finished result looks like — format, filename, structure]
 
 ## Tone
 [One paragraph on voice and style]
 ```
 
-**Key point:** Write the skill body as if you are briefing a capable new employee who has never seen this task before. Leave nothing to inference that you can make explicit.
+**Reflection prompt:**
+"For the skill you have in mind: what is the one thing that, if left to improvisation, would make the output unreliable? That is the thing you need to specify explicitly."
 
 **Check question:**
-> What are the three most common mistakes in skill body writing?
+> Name the three most common mistakes in skill body writing.
 
-*(Expected: vague instructions without how-to, no output spec, no edge case handling)*
+*Expected: vague instructions without how-to, no output spec, no edge case handling.*
 
 ---
 
 ### Module 5 — Deploying and Testing
 
 **Concept:**
-Deployment is three steps:
+Three deployment steps:
 
-1. **Create the folder** at `~/.claude/skills/your-skill-name/`
-2. **Drop in `SKILL.md`** (and any supporting files)
-3. **Restart Claude Code** — skills are loaded at session start, so a running session won't see a new file until you restart
+1. Create the folder at `~/.claude/skills/your-skill-name/`
+2. Drop in `SKILL.md` and supporting files
+3. Restart Claude Code — skills load at session start
 
-**Testing your skill:**
-
-Run it with the exact trigger phrase from your description. Then test edge cases:
-- What happens if the user gives a very short or vague first answer?
+**Testing systematically:**
+- Does the main trigger phrase fire the skill?
+- What happens with a vague or very short first input?
 - What happens if the user asks a question mid-flow?
 - What happens if they try to skip to the end?
+- Is the output format consistent across multiple runs?
 
-**Iterating:**
-Edit `SKILL.md` directly. Restart Claude Code. Test again. Skills are just files — the iteration loop is as fast as you can type.
+**Iteration loop:**
+Edit `SKILL.md` → restart Claude Code → test → repeat. No build step. The loop is as fast as you can type.
 
-**Common deployment mistakes:**
+**Common deployment errors:**
 
-| Mistake | Fix |
-|---------|-----|
-| Skill not triggering | Check that `description` includes the trigger phrase the user typed |
-| Skill triggers when it shouldn't | Make the description more specific, narrow the conditions |
-| Output looks different every time | Add an explicit output spec to the skill body |
-| Supporting files not found | Ensure they are in the same skill folder; reference them by filename in SKILL.md |
-| Changes not taking effect | Restart Claude Code — running sessions don't hot-reload |
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| Skill not triggering | `description` doesn't match the phrase used | Add trigger phrases to description |
+| Skill fires incorrectly | `description` too broad | Narrow conditions |
+| Output inconsistent | No output spec in body | Define format explicitly |
+| Supporting files not found | File in wrong folder | Move to same skill folder |
+| Changes not taking effect | Session not restarted | Restart Claude Code |
+
+**Reflection prompt:**
+"What is the riskiest part of deploying your skill — the part most likely to be wrong on the first try? What would you test first?"
 
 **Check question:**
-> You updated `SKILL.md` but Claude is still running the old version. What is the most likely cause?
+> You edited `SKILL.md` and tested it immediately, but Claude is still running the old behavior. What is happening?
 
-*(Expected: Claude Code session was not restarted; skills load at session start)*
+*Expected: Claude Code session was not restarted. Skills are loaded at session start, not hot-reloaded.*
 
 ---
 
-### Tutorial Complete
+### End of Tutorial: Double-Loop Question
 
-You have covered all five modules:
+Before closing the tutorial, ask:
 
-1. What a Claude skill is
-2. The folder and file structure
-3. Writing the frontmatter
-4. Writing the skill body
-5. Deploying and testing
+"Before today, what did you assume about how Claude skills work that turned out to be different than you expected?"
 
-**Want to lock it in?** Type "flashcards" for a quick review or "quiz" to test yourself.
+Wait for their answer. Respond to it specifically — this is not a throwaway question. If their assumption reveals a gap they haven't covered, address it now. If it surfaces something worth flagging (e.g. "I assumed skills could run code" — correct that clearly).
+
+Then close:
+
+"You have covered all five modules. Want to lock it in with Flashcards, test yourself with the Quiz, or put it into practice with the Build Challenge?"
 
 ---
 
 ## Mode 2: Flashcards
 
-Run the cards below one at a time. Show the **front** first. Wait for the user to attempt an answer or say "show answer". Then reveal the **back**. Ask "Got it, or review again?" and track which cards they want to repeat.
+Run cards one at a time. Before each card, ask the learner to rate their confidence on this topic: 1 (no idea) to 3 (pretty sure). Show the front. Wait for their answer or "show". Reveal the back. Ask: "Got it or review again?"
 
-After all cards, show a summary: how many they got right, and re-run any they flagged for review.
+Track:
+- Cards marked for review
+- Cards where stated confidence was 3 but the answer was wrong (these are the highest-priority review items — overconfidence in a gap)
 
-Say "Card 1 of 20" at the start of each card so they know where they are.
+After all 20 cards, show:
+- Total correct
+- Cards to re-run (flagged for review)
+- Any confidence-answer mismatches — name these explicitly: "You rated yourself confident on Card 6 but the answer was off — that is worth a closer look"
+
+Re-run flagged cards. Re-run confidence mismatches. Stop when the learner says they are done or all cards are clean.
+
+Say "Card X of 20" before each card.
 
 ---
 
-**Card 1**
+**Card 1** [topic: fundamentals]
 Front: What is a Claude Code skill?
-Back: A Markdown file that gives Claude reusable instructions for a specific task, invoked by a slash command or trigger phrase. Skills are stored in `~/.claude/skills/` and loaded at session start.
+Back: A Markdown file that gives Claude reusable instructions for a specific task, invoked by a slash command or trigger phrase. Stored in `~/.claude/skills/`, loaded at session start.
 
-**Card 2**
+**Card 2** [topic: structure]
 Front: Where do skills live on the file system?
-Back: `~/.claude/skills/your-skill-name/` — each skill gets its own folder named after the skill.
+Back: `~/.claude/skills/your-skill-name/` — each skill gets its own folder.
 
-**Card 3**
+**Card 3** [topic: structure]
 Front: What is the only required file inside a skill folder?
 Back: `SKILL.md`
 
-**Card 4**
+**Card 4** [topic: structure]
 Front: What are the two parts of a `SKILL.md` file?
-Back: (1) YAML frontmatter between `---` delimiters, and (2) the body — the instructions Claude follows when running the skill.
+Back: (1) YAML frontmatter between `---` delimiters, and (2) the body — instructions Claude follows when running the skill.
 
-**Card 5**
+**Card 5** [topic: frontmatter]
 Front: What does the `name` field in frontmatter control?
-Back: The skill's identifier — it matches the folder name and becomes the slash command (e.g. `name: sop-builder` → `/sop-builder`).
+Back: The skill's identifier — matches the folder name and becomes the slash command (e.g. `name: sop-builder` → `/sop-builder`).
 
-**Card 6**
+**Card 6** [topic: frontmatter]
 Front: What does Claude use the `description` field for?
-Back: To decide whether to invoke the skill. Claude reads descriptions to match user intent to the right skill. A vague description causes misses or false triggers.
+Back: To decide whether to invoke the skill. Claude reads descriptions to match user intent. A vague description causes misses or false triggers.
 
-**Card 7**
+**Card 7** [topic: frontmatter]
 Front: Name two things a good `description` field includes.
-Back: The specific job the skill does, trigger phrases or slash commands that should invoke it, and the context in which it applies.
+Back: The specific job the skill does, trigger phrases or slash commands, and the context in which it applies.
 
-**Card 8**
-Front: You install a new skill but Claude doesn't recognize it. What do you check first?
-Back: Whether you restarted Claude Code — skills are loaded at session start and a running session won't see new files.
+**Card 8** [topic: deployment]
+Front: You install a new skill but Claude does not recognize it. What do you check first?
+Back: Whether you restarted Claude Code — skills load at session start. A running session won't see new files.
 
-**Card 9**
-Front: Your skill triggers when it shouldn't. What is the most likely cause?
-Back: The `description` is too broad or vague. Narrow it to be more specific about the context and conditions.
+**Card 9** [topic: frontmatter]
+Front: Your skill triggers when it should not. What is the most likely cause?
+Back: The `description` is too broad. Narrow it — add specific context and conditions, not just trigger phrases.
 
-**Card 10**
-Front: Your skill output looks different every time. What is missing from the skill body?
-Back: An explicit output specification — the skill body should define exactly what the finished result looks like (format, structure, file name, etc.).
+**Card 10** [topic: body]
+Front: Your skill output looks different every time. What is missing?
+Back: An explicit output specification — the body should define exactly what done looks like: format, structure, filename.
 
-**Card 11**
+**Card 11** [topic: body]
 Front: What are the three common mistakes when writing a skill body?
-Back: (1) Describing what to do without explaining how. (2) No output specification. (3) No handling for edge cases or interruptions.
+Back: (1) Describing what without saying how. (2) No output spec. (3) No handling for edge cases.
 
-**Card 12**
+**Card 12** [topic: body]
 Front: What structure works well for a skill body?
 Back: When to Use → How It Works → Rules → Output → Tone
 
-**Card 13**
+**Card 13** [topic: structure]
 Front: Can you add supporting files to a skill folder?
-Back: Yes. Put them in the same skill folder. Reference them by filename in `SKILL.md`. Claude will load them as needed.
+Back: Yes. Same folder. Reference them by filename in `SKILL.md`. Claude will load them as needed.
 
-**Card 14**
+**Card 14** [topic: deployment]
 Front: How do you update a skill?
-Back: Edit `SKILL.md` directly. Restart Claude Code. Test again. No build step needed.
+Back: Edit `SKILL.md` directly. Restart Claude Code. Test. No build step needed.
 
-**Card 15**
-Front: A supporting file referenced in your skill isn't being found. What do you check?
-Back: That the supporting file is in the same skill folder (not a parent or sibling folder).
+**Card 15** [topic: structure]
+Front: A supporting file referenced in your skill is not being found. What do you check?
+Back: That the file is in the same skill folder, not a parent or sibling directory.
 
-**Card 16**
+**Card 16** [topic: fundamentals]
 Front: What is the difference between a skill and a system prompt?
-Back: A system prompt is set once per session for the whole conversation. A skill is a reusable, file-backed, named instruction set that can be invoked on demand via a trigger.
+Back: A system prompt is set once per session for the whole conversation. A skill is reusable, file-backed, named, and invoked on demand via a trigger.
 
-**Card 17**
-Front: What is the purpose of a `README.md` in a skill folder?
-Back: Documentation for humans — explains what the skill does, how to install it, and what output to expect. Not read by Claude during execution.
+**Card 17** [topic: structure]
+Front: What is `README.md` in a skill folder for?
+Back: Documentation for humans — install instructions, what the skill does, example output. Claude does not execute it.
 
-**Card 18**
+**Card 18** [topic: fundamentals]
 Front: How do you trigger a skill?
-Back: Either by typing its slash command (e.g. `/sop-builder`) or by using natural language that matches the trigger phrases in the `description` field.
+Back: Slash command (e.g. `/sop-builder`) or natural language matching the trigger phrases in the `description` field.
 
-**Card 19**
+**Card 19** [topic: body]
 Front: You want Claude to always produce output in a specific Markdown template. How do you ensure this?
-Back: Include the template as a supporting file in the skill folder (e.g. `TEMPLATE.md`) and reference it explicitly in the skill body instructions.
+Back: Put the template in the skill folder as a supporting file (e.g. `TEMPLATE.md`). Reference it explicitly in the skill body.
 
-**Card 20**
+**Card 20** [topic: deployment]
 Front: Name three things to test when validating a new skill.
-Back: (1) The main trigger phrase fires the skill. (2) Edge cases (vague input, mid-flow questions, skipping ahead) are handled. (3) The output format is consistent across multiple runs.
+Back: (1) Main trigger phrase fires correctly. (2) Edge cases are handled (vague input, mid-flow questions, skipping ahead). (3) Output format is consistent across runs.
 
 ---
 
 ## Mode 3: Quiz
 
-Run all 10 questions in sequence. After each answer, tell the user if they are right or wrong, and give a one-sentence explanation. Track the score silently. At the end, show the score and a review list of any questions missed.
+10 questions. Each is tagged with a topic. After each answer, state right/wrong and give one sentence of explanation. Track score and topic performance silently. Show full diagnostic at the end.
 
 Say "Question X of 10" before each question.
 
 ---
 
-**Q1** — Multiple choice
-Which file is *required* inside a Claude skill folder?
+**Q1** [topic: structure] — Multiple choice
+Which file is required inside a Claude skill folder?
 
 A) `README.md`
 B) `SKILL.md`
 C) `config.yaml`
 D) `index.md`
 
-*Correct: B. `SKILL.md` is the only required file. All others are optional.*
+*Correct: B. `SKILL.md` is the only required file.*
 
 ---
 
-**Q2** — Fill in the blank
+**Q2** [topic: structure] — Fill in the blank
 Skills are stored at: `~/.claude/______/your-skill-name/`
 
-*Correct: `skills`. Full path: `~/.claude/skills/your-skill-name/`*
+*Correct: `skills`*
 
 ---
 
-**Q3** — True or False
-You can update a skill and have the changes take effect without restarting Claude Code.
+**Q3** [topic: deployment] — True or False
+You can update a skill and have changes take effect without restarting Claude Code.
 
-*Correct: False. Skills are loaded at session start. You must restart for changes to take effect.*
+*Correct: False. Skills load at session start. Restart required.*
 
 ---
 
-**Q4** — Multiple choice
-Claude is not triggering your skill even though you installed it correctly. The most likely cause is:
+**Q4** [topic: frontmatter] — Multiple choice
+Claude is not triggering your skill even though it is installed. Most likely cause:
 
 A) The skill body is too long
-B) The `description` field doesn't match the phrase you typed
+B) The `description` field does not match the phrase you typed
 C) The folder name has a capital letter
 D) You need to register the skill in a config file
 
-*Correct: B. Claude uses the `description` field to match user intent. If the trigger phrase isn't there, the skill won't fire.*
+*Correct: B. Claude uses `description` to match intent.*
 
 ---
 
-**Q5** — Short answer
+**Q5** [topic: structure] — Short answer
 Name the two parts of a `SKILL.md` file.
 
-*Correct: YAML frontmatter (between `---` delimiters) and the body (the instructions Claude follows).*
+*Correct: YAML frontmatter and the body (instructions).*
 
 ---
 
-**Q6** — Multiple choice
+**Q6** [topic: body] — Multiple choice
 Your skill produces different output formats on different runs. What is missing?
 
 A) A `name` field in frontmatter
@@ -393,63 +448,149 @@ B) An explicit output specification in the skill body
 C) A `triggers` field in frontmatter
 D) A supporting template file
 
-*Correct: B. Without an explicit output spec, Claude improvises. Define exactly what the result should look like.*
+*Correct: B. Without an output spec, Claude improvises the format.*
 
 ---
 
-**Q7** — True or False
+**Q7** [topic: frontmatter] — True or False
 The `name` field in a skill's frontmatter must match the folder name.
 
-*Correct: True. The name controls the slash command and should match the folder for consistency.*
+*Correct: True. The name controls the slash command and should match the folder.*
 
 ---
 
-**Q8** — Multiple choice
-Which of these is the BEST `description` for a skill that builds SOPs?
+**Q8** [topic: frontmatter] — Multiple choice
+Which is the best `description` for a skill that builds SOPs?
 
 A) "Helps with documentation."
 B) "Use for process stuff and SOPs."
 C) "Interview someone to document a process as an SOP. Use when the user says 'make an SOP', 'document this process', or '/sop-builder'."
 D) "SOP builder tool for teams."
 
-*Correct: C. It names the job, the context, and includes explicit trigger phrases.*
+*Correct: C. Names the job, the context, and includes explicit trigger phrases.*
 
 ---
 
-**Q9** — Short answer
-What is one thing a `README.md` in a skill folder is used for, and one thing it is NOT used for?
+**Q9** [topic: structure] — Short answer
+What is one thing `README.md` in a skill folder is for, and one thing it is NOT for?
 
-*Correct: Used for — human documentation (install instructions, what the skill does, example output). NOT used for — Claude's execution instructions (that's SKILL.md).*
-
----
-
-**Q10** — Scenario
-A colleague says: "I wrote a skill but Claude keeps running it when I ask totally unrelated things." What is the most likely fix?
-
-*Correct: The `description` field is too broad. They need to narrow it — add specific conditions, context, and trigger phrases that distinguish when the skill should and should not fire.*
+*Correct: For — human documentation (install, what it does, example output). Not for — Claude's execution instructions.*
 
 ---
 
-### Scoring
+**Q10** [topic: frontmatter] — Scenario
+A colleague says: "My skill keeps running when I ask totally unrelated things." What is the most likely fix?
 
-After Q10, show:
+*Correct: The `description` is too broad. Narrow it — add specific conditions and context so Claude can distinguish when the skill should and should not fire.*
 
+---
+
+### Scoring and Diagnostic
+
+After Q10, calculate:
+
+1. **Total score** — X / 10
+2. **Topic breakdown** — show score per topic:
+   - Fundamentals (Q1 basis)
+   - Structure (Q1, Q2, Q5, Q9)
+   - Frontmatter (Q4, Q7, Q8, Q10)
+   - Body (Q6)
+   - Deployment (Q3)
+
+3. **Improvement pathway** — based on topic breakdown:
+
+| Weak area | What to do next |
+|-----------|-----------------|
+| Structure | Re-read Module 2, then do Flashcards 2, 3, 4, 13, 15, 17 |
+| Frontmatter | Re-read Module 3, then do Flashcards 5, 6, 7, 9 |
+| Body | Re-read Module 4, then do Flashcards 10, 11, 12, 19 |
+| Deployment | Re-read Module 5, then do Flashcards 8, 14, 20 |
+| Fundamentals | Start at Tutorial Module 1 |
+
+4. **Grade and recommendation:**
+- 9-10: "Strong across all areas. Go build something — the Build Challenge will push you further."
+- 7-8: "Solid. One or two gaps above. Targeted review will close them fast."
+- 5-6: "You have the shape of it but some concepts are fuzzy. Follow the improvement pathway above, then re-quiz."
+- 0-4: "The foundation needs work. Run the full Tutorial, then come back to this quiz."
+
+5. **One specific next action** — not just a grade band, but one concrete thing: "Run Flashcards 6, 7, and 9 — those three cover what you missed on frontmatter."
+
+---
+
+## Mode 4: Build Challenge
+
+This is the capstone. The learner writes a real skill, and Claude critiques it. This is where recall becomes capability.
+
+**How it runs:**
+
+**Step 1 — Pick a target**
+Ask: "What skill do you want to build? If you already have something in mind from your intake, use that. If not, I will suggest one based on what you said."
+
+If they have no idea, suggest one of: a meeting prep checklist, a pull request description writer, a daily standup formatter, a bug report template filler.
+
+**Step 2 — Draft the frontmatter**
+Ask them to write just the frontmatter block first:
+```yaml
+---
+name:
+description:
+---
 ```
-Your score: X / 10
 
-[If 9-10]: Expert. You are ready to build and ship skills.
-[If 6-8]:  Solid. Review the questions you missed, then try the flashcards on those topics.
-[If 0-5]:  Go back to the Tutorial — you have the right instincts but need the foundation.
-```
+Critique it on three criteria:
+- Is the name clear and folder-safe (lowercase, hyphens, no spaces)?
+- Does the description include the job, the context, and at least two trigger phrases?
+- Would this description cause false triggers on common Claude requests?
 
-List each missed question with a one-line explanation of the correct answer.
+Give specific feedback. Ask them to revise if needed. Do not move to the body until the frontmatter is solid.
+
+**Step 3 — Draft the body**
+Ask them to write the full skill body. No template provided — they should apply what they learned.
+
+Critique on four criteria:
+- Does it specify how, not just what?
+- Is there an explicit output specification?
+- Are predictable edge cases handled?
+- Is the tone and structure clear enough for a stranger to follow?
+
+Give specific, line-level feedback. Quote their own text back to them. Point out exactly where it would fail.
+
+**Step 4 — Revision**
+Ask them to revise based on feedback. One round minimum. Two if there are significant gaps.
+
+**Step 5 — Reflection**
+After the final version, ask two questions:
+- "What was harder to specify than you expected?"
+- "What would you want to test first when you deploy this?"
+
+These questions cement the learning. Respond to their answers.
+
+**Step 6 — Save option**
+Offer to save their finished skill to the appropriate path: `~/.claude/skills/[their-skill-name]/SKILL.md`. If they accept, write it out as a complete, ready-to-deploy file.
+
+---
+
+## Improvement Pathway (Cross-Mode)
+
+Whenever a learner finishes any scored mode (Quiz or Flashcards), offer a clear next step based on what they missed — not just a grade. The pathway is:
+
+1. **Identify the weak topic** from the diagnostic
+2. **Point to the specific module** in the Tutorial that covers it
+3. **List the specific flashcards** that reinforce it (by card number and topic tag)
+4. **Offer a targeted mini-quiz** — just the questions on that topic, not all 10 again
+5. **Suggest the Build Challenge** as the terminal test of whether the concept is solid
+
+The goal is not to send someone back to the beginning every time. It is to close the specific gap with the least friction.
 
 ---
 
 ## General Rules
 
-- Never show all questions or all cards at once. One at a time, always.
-- Never skip a user's answer without acknowledging it.
-- If the user asks a question mid-session, answer it briefly, then offer to resume where they left off.
-- If the user wants to switch modes mid-session, let them. Resume at the start of the new mode.
-- Keep the tone encouraging and direct. This is a skill worth having — make it feel that way.
+- One question or prompt at a time. No walls of questions.
+- Never skip the intake. It changes everything that follows.
+- Always connect content to what the learner said they are building. Generic = forgettable.
+- Never acknowledge an answer with "great!" or "perfect!" — respond to the substance of what they said.
+- Reflection prompts are not rhetorical. Wait for a real answer and engage with it.
+- If the learner asks a question mid-session, answer it, then offer to resume. Do not railroad.
+- Adults direct their own learning. If they want to skip a module or change modes, support it.
+- The double-loop question at the end of Tutorial is not optional. It is where the deepest learning happens.
