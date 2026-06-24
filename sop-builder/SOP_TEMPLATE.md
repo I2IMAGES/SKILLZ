@@ -33,9 +33,9 @@ What starts this process and how you know it is time to begin.
 
 | # | Step | Tool / system | What to look at | Output of this step |
 |---|------|---------------|-----------------|---------------------|
-| 1 | Open the incoming request form | Helpdesk portal | Check that all required fields are filled | Confirmed request ready to action |
-| 2 | Look up the client record | CRM | Verify account status is Active, not On Hold | Confirmed client is eligible |
-| 3 | [next step] | [tool] | [what to check] | [result] |
+| 1 | *(example) Open the incoming request form* | *(example) Helpdesk portal* | *(example) All required fields are filled* | *(example) Request confirmed ready to action* |
+| 2 | [your step] | [tool] | [what to check] | [result] |
+| 3 | [your step] | [tool] | [what to check] | [result] |
 
 ---
 

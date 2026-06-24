@@ -65,7 +65,7 @@ Get the name and a one-sentence description before anything else. This anchors t
 - How often does it run, and roughly how long does it take?
 - Why does it matter? What breaks downstream if it is done wrong or skipped?
 
-### 2. Tools, access, and data (ask this early)
+### 2. Tools, access, and data
 Knowing the tools upfront helps you ask smarter questions about *how* each step is done.
 - List every tool, login, sheet, or system this process touches.
 - What access or permissions does someone need to run it end to end?

@@ -43,7 +43,7 @@ After the interview, you get a filled SOP covering:
 - Handoffs in and out
 - Automation candidates and open questions
 
-The file is saved as `[process-name]-sop.md` in your working directory.
+If you choose to save, the file is written as `[process-name]-sop.md` in your working directory.
 
 ---
 

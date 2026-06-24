@@ -148,9 +148,11 @@ Three frontmatter fields matter:
 
 | Field | Required | Purpose |
 |-------|----------|---------|
-| `name` | Yes | Identifier — matches folder name and becomes the slash command |
-| `description` | Yes | When to invoke this skill — Claude reads this to match intent |
-| `triggers` | No | Explicit slash commands or phrases that always invoke it |
+| `name` | Yes | Identifier — **must match the folder name exactly** and becomes the slash command |
+| `description` | Yes | When to invoke this skill — Claude reads this to match user intent via natural language |
+| `triggers` | No | Explicit slash commands that always invoke the skill regardless of description matching |
+
+**Important distinction:** `description` handles natural language matching ("interview me about my workflow"). `triggers` handles exact slash commands ("/sop-builder"). In most skills, a well-written `description` that includes the slash command phrase is enough — you do not need both. Use `triggers` only when you want guaranteed invocation on a specific command even if the description would not match.
 
 The `description` field is load-bearing. Claude reads it to decide whether the skill applies to what the user just said. A vague description causes misses (skill doesn't fire when it should) or false triggers (skill fires when it shouldn't).
 
@@ -330,8 +332,8 @@ Front: What does Claude use the `description` field for?
 Back: To decide whether to invoke the skill. Claude reads descriptions to match user intent. A vague description causes misses or false triggers.
 
 **Card 7** [topic: frontmatter]
-Front: Name two things a good `description` field includes.
-Back: The specific job the skill does, trigger phrases or slash commands, and the context in which it applies.
+Front: Name at least two things a good `description` field includes.
+Back: The specific job the skill does; trigger phrases or slash commands that should invoke it; the context or conditions in which it applies. A strong description has all three.
 
 **Card 8** [topic: deployment]
 Front: You install a new skill but Claude does not recognize it. What do you check first?
@@ -426,10 +428,10 @@ Claude is not triggering your skill even though it is installed. Most likely cau
 
 A) The skill body is too long
 B) The `description` field does not match the phrase you typed
-C) The folder name has a capital letter
+C) You forgot to add a `triggers` field to the frontmatter
 D) You need to register the skill in a config file
 
-*Correct: B. Claude uses `description` to match intent.*
+*Correct: B. Claude uses `description` to match intent. A missing `triggers` field (C) is not required — `description` alone handles natural language matching. No registration step (D) exists.*
 
 ---
 
@@ -499,13 +501,15 @@ After Q10, calculate:
 
 3. **Improvement pathway** — based on topic breakdown:
 
-| Weak area | What to do next |
-|-----------|-----------------|
-| Structure | Re-read Module 2, then do Flashcards 2, 3, 4, 13, 15, 17 |
-| Frontmatter | Re-read Module 3, then do Flashcards 5, 6, 7, 9 |
-| Body | Re-read Module 4, then do Flashcards 10, 11, 12, 19 |
-| Deployment | Re-read Module 5, then do Flashcards 8, 14, 20 |
-| Fundamentals | Start at Tutorial Module 1 |
+Note: Body and Deployment each have only one quiz question. A miss there is a strong signal but not a full diagnostic — use the flashcard sets below to probe further.
+
+| Weak area | Re-read | Flashcards to re-run | Quiz questions to retry |
+|-----------|---------|----------------------|------------------------|
+| Structure | Module 2 | 2, 3, 4, 13, 15, 17 | Q1, Q2, Q5, Q9 |
+| Frontmatter | Module 3 | 5, 6, 7, 9 | Q4, Q7, Q8, Q10 |
+| Body | Module 4 | 10, 11, 12, 19 | Q6 |
+| Deployment | Module 5 | 8, 14, 20 | Q3 |
+| Fundamentals | Module 1 | 1, 16, 18 | (covered in Tutorial check questions) |
 
 4. **Grade and recommendation:**
 - 9-10: "Strong across all areas. Go build something — the Build Challenge will push you further."
@@ -576,11 +580,24 @@ Whenever a learner finishes any scored mode (Quiz or Flashcards), offer a clear 
 
 1. **Identify the weak topic** from the diagnostic
 2. **Point to the specific module** in the Tutorial that covers it
-3. **List the specific flashcards** that reinforce it (by card number and topic tag)
-4. **Offer a targeted mini-quiz** — just the questions on that topic, not all 10 again
+3. **List the specific flashcards** that reinforce it (by card number from the table above)
+4. **Offer to retry just the missed quiz questions** — not all 10 again, only the ones they got wrong
 5. **Suggest the Build Challenge** as the terminal test of whether the concept is solid
 
 The goal is not to send someone back to the beginning every time. It is to close the specific gap with the least friction.
+
+---
+
+## Closing the Session
+
+After Build Challenge Step 6 (or after whichever mode was the last one the learner chose), close explicitly:
+
+1. Summarize what was covered in this session in two or three sentences — use their words and their skill idea.
+2. Name the one most important thing they should remember.
+3. Ask: "Is there anything you are still uncertain about before you go build?"
+4. If they name something, address it. If not, close with: "You have what you need. Go deploy it — the only thing left to learn you will learn from the first real run."
+
+Do not offer more content after the close unless they ask for it. A complete session has an ending.
 
 ---
 

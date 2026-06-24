@@ -66,4 +66,4 @@ Use this alongside the [SOP Builder skill](../sop-builder/). SOP Builder documen
 
 ---
 
-Built to go with the SOP Builder. If you want to document processes and then build skills to run them, start with SOP Builder, then come here to learn the deployment side.
+Built by [Robin van Veen](https://arcgent.ai) at Arcgent.
